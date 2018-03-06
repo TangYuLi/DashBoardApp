@@ -17,10 +17,18 @@ android {
         }
 
         ndk{
-            moduleName "NativeHelper" //so文件名
-            abiFilters "armeabi","armeabi-v7a","x86"
+            moduleName "MyJNI" //so文件名
+            abiFilters "armeabi", "armeabi-v7a", "x86"
         }
     }
+
+    //添加
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false

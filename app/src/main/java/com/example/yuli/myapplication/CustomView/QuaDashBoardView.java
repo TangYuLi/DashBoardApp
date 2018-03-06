@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -18,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.yuli.myapplication.Activity.DashViewActivity;
 import com.example.yuli.myapplication.R;
 
 public class QuaDashBoardView extends View {
@@ -406,26 +408,37 @@ public class QuaDashBoardView extends View {
             x = event.getX();
             y = event.getY();
         } else ;
+
         if (isPointInQua(x, y)) {
             round = getRound(new float[]{x, y});
             Toast.makeText(getContext(), "" + round + "°", Toast.LENGTH_LONG).show();
             postInvalidate();
+        }else {
+            Message msg = Message.obtain();
+            msg.what = -2;
+            msg.obj = round;
+            ((DashViewActivity)getContext()).handler.sendMessage(msg);
         }
         return super.onTouchEvent(event);
     }
 
     public boolean isPointInQua(float x, float y) {
+        boolean isInQua = false;
         switch (whichQua) {
             case 1:
-                if (x >= centerX && y <= centerY) return true;
+                if (x >= centerX && y <= centerY && x<=centerX+radius && y>=centerY-radius) isInQua = true;
+                break;
             case 2:
-                if (x >= centerX && y >= centerY) return true;
+                if (x >= centerX && y >= centerY && x<=centerX+radius && y<=centerY+radius) isInQua = true;
+                break;
             case 3:
-                if (x <= centerX && y >= centerY) return true;
+                if (x <= centerX && y >= centerY && x>=centerX-radius && y<=centerY+radius) isInQua = true;
+                break;
             case 4:
-                if (x <= centerX && y <= centerY) return true;
+                if (x <= centerX && y <= centerY && x>=centerX-radius && y>=centerY-radius) isInQua = true;
+                break;
         }
-        return false;
+        return isInQua;
     }
 
     public int getRound(float[] pts) {

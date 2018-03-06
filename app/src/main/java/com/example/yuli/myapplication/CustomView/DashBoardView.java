@@ -47,6 +47,8 @@ public class DashBoardView extends View{
     private Quadrant thirdQua;
     private Quadrant fourthQua;
     private Paint paint;
+    private final int bitmapRotateRound = -45;
+    private int rotateRound = 0;
 
     public DashBoardView(Context context) {
         super(context);
@@ -66,6 +68,11 @@ public class DashBoardView extends View{
         paint.setStrokeWidth(strokeWidth);
         paint.setColor(color);
         paint.setTextSize(textSize);
+    }
+
+    public void setRotateRound(int rotateRound){
+        this.rotateRound = rotateRound;
+        postInvalidate();
     }
 
     @Override
@@ -93,6 +100,9 @@ public class DashBoardView extends View{
         //画刻度线
         drawLine(canvas);
 
+        //画焦点线
+        drawFocusLine(canvas);
+
         //画四个象限的放大按钮
         drawButtons(canvas);
     }
@@ -119,10 +129,10 @@ public class DashBoardView extends View{
         float right = centerX+bitmapWidth/2;
         float bottom = centerY+bitmapHeight/2;
 
-        canvas.rotate(-45,centerX,centerY);
+        canvas.rotate(bitmapRotateRound+rotateRound,centerX,centerY);
         RectF rectF = new RectF(left,top,right,bottom);
         canvas.drawBitmap(bitmap,null,rectF,paint);
-        canvas.rotate(45,centerX,centerY);
+        canvas.rotate(-(bitmapRotateRound+rotateRound),centerX,centerY);
     }
 
     private void drawLine(Canvas canvas){
@@ -188,6 +198,15 @@ public class DashBoardView extends View{
         path.lineTo(dashLineStopX,dashLineStopY);
         canvas.drawPath(path,paint);
         paint.setPathEffect(null);
+    }
+
+    private void drawFocusLine(Canvas canvas){
+        setPaint(Paint.Style.STROKE,true,10,Color.RED,0);
+
+        canvas.rotate(rotateRound,centerX,centerY);
+        canvas.drawLine(startX,startY,dashLineStopX,dashLineStopY,paint);
+        drawText(canvas,rotateRound);
+        canvas.rotate(-rotateRound,centerX,centerY);
     }
 
     private void drawButtons(Canvas canvas){
