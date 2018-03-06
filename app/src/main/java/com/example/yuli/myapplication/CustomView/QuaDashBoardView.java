@@ -55,6 +55,9 @@ public class QuaDashBoardView extends View {
     private float dashLineStartY;
     private float dashLineStopX;
     private float dashLineStopY;
+    private float distX;
+    private float distY;
+    private float distZ;
     private final int lineLen_XL = 120;
     private final int lineLen_L = 90;
     private final int lineLen_M = 60;
@@ -410,7 +413,7 @@ public class QuaDashBoardView extends View {
         } else ;
 
         if (isPointInQua(x, y)) {
-            round = getRound(new float[]{x, y});
+            round = getRound();
             Toast.makeText(getContext(), "" + round + "°", Toast.LENGTH_LONG).show();
             postInvalidate();
         }else {
@@ -424,28 +427,28 @@ public class QuaDashBoardView extends View {
 
     public boolean isPointInQua(float x, float y) {
         boolean isInQua = false;
-        switch (whichQua) {
+        distX = Math.abs(x-centerX);
+        distY = Math.abs(y-centerY);
+        distZ = (float) Math.sqrt(distX*distX+distY*distY);
+        switch (whichQua){
             case 1:
-                if (x >= centerX && y <= centerY && x<=centerX+radius && y>=centerY-radius) isInQua = true;
+                if (x>centerX && y<centerY && distZ<radius) isInQua = true;
                 break;
             case 2:
-                if (x >= centerX && y >= centerY && x<=centerX+radius && y<=centerY+radius) isInQua = true;
+                if (x>centerX && y>centerY && distZ<radius) isInQua = true;
                 break;
             case 3:
-                if (x <= centerX && y >= centerY && x>=centerX-radius && y<=centerY+radius) isInQua = true;
+                if (x<centerX && y>centerY && distZ<radius) isInQua = true;
                 break;
             case 4:
-                if (x <= centerX && y <= centerY && x>=centerX-radius && y>=centerY-radius) isInQua = true;
+                if (x<centerX && y<centerY && distZ<radius) isInQua = true;
                 break;
         }
         return isInQua;
     }
 
-    public int getRound(float[] pts) {
-        float x = Math.abs(pts[0] - centerX);
-        float y = Math.abs(pts[1] - centerY);
-        float z = (float) Math.sqrt(x * x + y * y);
-        float round = (float) (Math.asin(y / z) / Math.PI * 180);
+    public int getRound() {
+        float round = (float) (Math.asin(distY / distZ) / Math.PI * 180);
 
         switch (whichQua) {
             case 1:
